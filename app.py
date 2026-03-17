@@ -93,8 +93,9 @@ if "history" not in st.session_state:
 
 st.subheader("Make a guess")
 
+# FIX: Replaced hardcoded "1 and 100" with dynamic low/high values from get_range_for_difficulty.
 st.info(
-    f"Guess a number between 1 and 100. "
+    f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
@@ -118,9 +119,15 @@ with col2:
 with col3:
     show_hint = st.checkbox("Show hint", value=True)
 
+# FIX: New Game now resets all session state (status, score, history, attempts)
+# so a finished game is no longer locked. Also uses the correct difficulty range
+# instead of the hardcoded 1-100.
 if new_game:
-    st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    st.session_state.attempts = 1
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.status = "playing"
+    st.session_state.score = 0
+    st.session_state.history = []
     st.success("New game started.")
     st.rerun()
 
@@ -139,6 +146,10 @@ if submit:
     if not ok:
         st.session_state.history.append(raw_guess)
         st.error(err)
+    # FIX: Added range validation — reject guesses outside the difficulty range.
+    elif guess_int < low or guess_int > high:
+        st.session_state.attempts -= 1  # don't penalize the attempt
+        st.error(f"Please enter a number between {low} and {high}.")
     else:
         st.session_state.history.append(guess_int)
 

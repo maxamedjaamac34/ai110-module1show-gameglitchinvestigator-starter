@@ -50,7 +50,7 @@ This is a number guessing game where the player tries to guess a secret number w
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+- [ ] [demo.png]
 
 ## 🚀 Stretch Features
 

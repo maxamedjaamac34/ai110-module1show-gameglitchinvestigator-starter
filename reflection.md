@@ -11,7 +11,15 @@ The game's Hard difficult range is wrong. Hard should return the range 1-100, bu
 
 The game does not stop me from guessing numbers below zero even though I was supposed to guess numbers between each difficult range.
 
-Another problem is that easy is from range 1-20, and normal should be 1-50 but it's 1-100 which should be maximum difficulty. So, the number of questions that noraml and hard should be displaying are switched. 
+Another problem is that easy is from range 1-20, and normal should be 1-50 but it's 1-100 which should be maximum difficulty. So, the number of questions that noraml and hard should be displaying are switched.
+
+A fourth bug I found was that the info banner at the top of the game always displayed "Guess a number between 1 and 100" no matter which difficulty was selected. The range was hardcoded in the UI instead of using the actual values from get_range_for_difficulty. I fixed this by replacing the hardcoded values with the dynamic low and high variables so the message now correctly updates when switching between Easy (1–20), Normal (1–50), and Hard (1–100).
+
+**Bugs identified by Claude (AI-found):**
+
+A fifth bug Claude identified was that every even-numbered attempt, the app was secretly converting the secret number from an integer to a string before passing it to check_guess. This caused a TypeError crash because Python cannot compare an int to a str using > or <. Claude spotted this by reading the submit handler in app.py and flagging the intentional-looking if/else block that was corrupting the secret type.
+
+A sixth bug Claude identified was that the New Game button was not fully resetting the game state. It only reset the attempts counter and generated a new secret, but left status, score, and history unchanged. This meant that after winning or losing, clicking New Game still showed the "You already won" or "Game over" message and blocked further play. Claude also noticed the secret was being generated with a hardcoded range of 1–100 instead of using the selected difficulty range. Both issues were fixed by resetting all session state variables and using low/high from get_range_for_difficulty.
 ---
 
 ## 2. How did you use AI as a teammate?
