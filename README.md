@@ -25,9 +25,28 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+### Game Purpose
+This is a number guessing game where the player tries to guess a secret number within a limited number of attempts. The player selects a difficulty (Easy, Normal, or Hard) which determines the number range and attempt limit. After each guess, the game gives a hint telling the player to guess higher or lower.
+
+### Bugs Found
+
+| # | Location | Description |
+|---|----------|-------------|
+| 1 | `get_range_for_difficulty` | Hard and Normal difficulty ranges were swapped — Normal returned `1–100` and Hard returned `1–50`, which is backwards |
+| 2 | `check_guess` | Hints were inverted — "Go HIGHER!" was shown when the guess was too high, and "Go LOWER!" when too low |
+| 3 | `check_guess` (app.py) | On every even-numbered attempt, the secret was converted to a string, causing broken comparisons |
+| 4 | New Game button | Clicking "New Game" did not reset `status` or `score`, so a finished game stayed locked |
+| 5 | UI hint message | The info banner always said "Guess a number between 1 and 100" regardless of difficulty |
+
+### Fixes Applied
+
+1. **Swapped difficulty ranges** — `get_range_for_difficulty` now correctly returns `1–20` for Easy, `1–50` for Normal, and `1–100` for Hard.
+
+2. **Fixed inverted hints** — Refactored `check_guess` out of `app.py` and into `logic_utils.py` with corrected messages:
+   - `guess > secret` → outcome `"Too High"`, hint `"Go LOWER!"`
+   - `guess < secret` → outcome `"Too Low"`, hint `"Go HIGHER!"`
+
+3. **Added pytest tests** — Written in `tests/test_game_logic.py` to verify both the outcome labels and the hint messages are correct after the fix. All 5 tests pass.
 
 ## 📸 Demo
 

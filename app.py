@@ -1,16 +1,18 @@
 import random
 import streamlit as st
+from logic_utils import check_guess
 
+# FIXME: Logic breaks here
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
         return 1, 20
     if difficulty == "Normal":
-        return 1, 100
-    if difficulty == "Hard":
         return 1, 50
+    if difficulty == "Hard":
+        return 1, 100
     return 1, 100
 
-
+# FIXME: Logic breaks here
 def parse_guess(raw: str):
     if raw is None:
         return False, None, "Enter a guess."
@@ -29,23 +31,8 @@ def parse_guess(raw: str):
     return True, value, None
 
 
-def check_guess(guess, secret):
-    if guess == secret:
-        return "Win", "🎉 Correct!"
-
-    try:
-        if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
-        else:
-            return "Too Low", "📉 Go LOWER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
-
+# FIX: check_guess moved to logic_utils.py and imported above.
+# Claude helped me move the logic and helped me fix the inverted hints bug and it helped me to refactor the function there.
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
     if outcome == "Win":
@@ -155,10 +142,9 @@ if submit:
     else:
         st.session_state.history.append(guess_int)
 
-        if st.session_state.attempts % 2 == 0:
-            secret = str(st.session_state.secret)
-        else:
-            secret = st.session_state.secret
+        # FIX: Removed intentional glitch that converted secret to string on even attempts,
+        # causing a TypeError when comparing int guess to str secret.
+        secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
 
